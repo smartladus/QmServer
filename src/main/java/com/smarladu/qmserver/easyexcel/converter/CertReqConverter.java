@@ -1,13 +1,11 @@
-package com.smarladu.qmserver.entity.exceldemo;
+package com.smarladu.qmserver.easyexcel.converter;
 
 import com.alibaba.excel.converters.Converter;
 import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import com.smarladu.qmserver.entity.CertType;
-
-import java.util.Arrays;
+import com.smarladu.qmserver.entity.certtask.CertReq;
 
 /**
  * @program: QmServer
@@ -15,10 +13,10 @@ import java.util.Arrays;
  * @author: Eason Wu
  * @create: 2021/06/29
  */
-public class CertTypeStringConverter implements Converter<CertType[]> {
+public class CertReqConverter implements Converter<CertReq[]> {
     @Override
     public Class supportJavaTypeKey() {
-        return String.class;
+        return CertReq[].class;
     }
 
     @Override
@@ -27,18 +25,18 @@ public class CertTypeStringConverter implements Converter<CertType[]> {
     }
 
     @Override
-    public CertType[] convertToJavaData(CellData cellData, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+    public CertReq[] convertToJavaData(CellData cellData, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         String[] arrCertTypeStr = cellData.getStringValue().split("\\|");
-        CertType[] certTypes = new CertType[arrCertTypeStr.length];
+        CertReq[] certReqs = new CertReq[arrCertTypeStr.length];
         for (int i = 0; i < arrCertTypeStr.length; i++) {
             String[] paras = arrCertTypeStr[i].split(":");
-            certTypes[i] = new CertType(paras[0], paras[1]);
+            certReqs[i] = new CertReq(paras[0], paras[1]);
         }
-        return certTypes;
+        return certReqs;
     }
 
     @Override
-    public CellData convertToExcelData(CertType[] certType, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
+    public CellData convertToExcelData(CertReq[] certReq, ExcelContentProperty excelContentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         return null;
     }
 }
