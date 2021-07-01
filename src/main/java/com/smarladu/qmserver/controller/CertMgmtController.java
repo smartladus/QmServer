@@ -4,10 +4,10 @@ import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.entity.certtask.CertTask;
 import com.smarladu.qmserver.entity.Region;
 import com.smarladu.qmserver.entity.CertCategory;
-import com.smarladu.qmserver.repository.CertCategoryRepository;
-import com.smarladu.qmserver.repository.TaskRecordRepository;
-import com.smarladu.qmserver.repository.CertTaskRepository;
-import com.smarladu.qmserver.repository.RegionRepository;
+import com.smarladu.qmserver.repository.cert.CertCategoryRepository;
+import com.smarladu.qmserver.repository.cert.TaskRecordRepository;
+import com.smarladu.qmserver.repository.cert.CertTaskRepository;
+import com.smarladu.qmserver.repository.cert.RegionRepository;
 import com.smarladu.qmserver.utils.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @program: QmServer
+ * @description: 认证管理模块Controller
+ * @author: Eason Wu
+ * @create: 2021/6/30
+ */
+
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping("/api/mongo")
-public class MongoDBController {
+@RequestMapping("/api/cert")
+public class CertMgmtController {
     @Autowired
     private TaskRecordRepository taskRecordRepository;
 
@@ -36,7 +43,7 @@ public class MongoDBController {
     private CertCategoryRepository certCategoryRepository;
 
 
-    @PostMapping("/cert/task/record/upload")
+    @PostMapping("/task/record/upload")
     @ResponseBody
     public String importCertRecord(MultipartFile file) {
         try {
@@ -49,12 +56,12 @@ public class MongoDBController {
         }
     }
 
-    @GetMapping("/cert/task/record/get")
-    public List<TaskRecord> getCertRecordByRegion(@RequestParam("task_no") String taskNo) {
-        return  taskRecordRepository.findByTaskNo(taskNo);
+    @GetMapping("/task/record/get/all")
+    public List<TaskRecord> getAllTaskRecord() {
+        return  taskRecordRepository.getAll();
     }
 
-    @PostMapping("/cert/task/upload")
+    @PostMapping("/task/upload")
     @ResponseBody
     public String importCertTask(MultipartFile file) {
         try {
@@ -67,13 +74,13 @@ public class MongoDBController {
         }
     }
 
-    @PostMapping(value = "/cert/task/insert", produces = "application/json;charset=UTF-8")
+    @PostMapping(value = "/task/insert", produces = "application/json;charset=UTF-8")
     public void insertTask(@RequestBody CertTask certTask) {
         log.info(certTask.toString());
         certTaskRepository.insert(certTask);
     }
 
-    @PostMapping("/cert/region/upload")
+    @PostMapping("/region/upload")
     @ResponseBody
     public String importRegion(MultipartFile file) {
         try {
@@ -86,12 +93,12 @@ public class MongoDBController {
         }
     }
 
-    @GetMapping("/cert/category/get")
+    @GetMapping("/category/get")
     public List<CertCategory> getCertCategoryByRegion(@RequestParam("region") String region) {
         return  certCategoryRepository.findByRegion(region);
     }
 
-    @PostMapping("/cert/category/upload")
+    @PostMapping("/category/upload")
     @ResponseBody
     public String importCertCategory(MultipartFile file) {
         try {

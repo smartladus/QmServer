@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 /**
  * @program: QmServer
- * @description:
+ * @description: MongoDB设置，用于去除集合中的 _class字段
  * @author: Eason Wu
  * @create: 2021/6/30
  */

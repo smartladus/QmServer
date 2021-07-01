@@ -3,6 +3,12 @@ package com.smarladu.qmserver.config;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * @program: QmServer
+ * @description: 设置跨域，暂时未启用
+ * @author: Eason Wu
+ * @create: 2021/6/30
+ */
 // 请求跨域
 //@Configuration
 public class CorsConfig implements WebMvcConfigurer {
