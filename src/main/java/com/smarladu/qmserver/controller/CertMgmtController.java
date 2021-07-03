@@ -61,6 +61,11 @@ public class CertMgmtController {
         return  taskRecordRepository.getAll();
     }
 
+    @GetMapping("/task/record/get/{taskNo}")
+    public List<TaskRecord> getTaskRecordByTaskNo(@PathVariable String taskNo) {
+        return  taskRecordRepository.findByTaskNo(taskNo);
+    }
+
     @PostMapping("/task/upload")
     @ResponseBody
     public String importCertTask(MultipartFile file) {
@@ -72,6 +77,11 @@ public class CertMgmtController {
             log.error(e.getMessage());
             return "FAIL";
         }
+    }
+
+    @GetMapping("/task/get/all")
+    public List<CertTask> getAllCertTask() {
+        return  certTaskRepository.getAll();
     }
 
     @PostMapping(value = "/task/insert", produces = "application/json;charset=UTF-8")
@@ -91,6 +101,11 @@ public class CertMgmtController {
             log.error(e.getMessage());
             return "FAIL";
         }
+    }
+
+    @GetMapping("/region/get/all")
+    public List<Region> getAllRegion() {
+        return  regionRepository.getAll();
     }
 
     @GetMapping("/category/get")

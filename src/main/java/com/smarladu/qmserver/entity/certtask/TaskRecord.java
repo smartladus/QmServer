@@ -1,6 +1,7 @@
 package com.smarladu.qmserver.entity.certtask;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.smarladu.qmserver.easyexcel.converter.LocalDateTimeConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -32,6 +34,6 @@ public class TaskRecord implements Serializable {
     @ExcelProperty("content")
     private String content;
 
-    @ExcelProperty("record_time")
+    @ExcelProperty(value = "record_time")
     private Date record_time;
 }
