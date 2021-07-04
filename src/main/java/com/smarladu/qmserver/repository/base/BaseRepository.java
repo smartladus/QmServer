@@ -37,9 +37,9 @@ public abstract class BaseRepository<T> {
     @Autowired
     protected MongoTemplate mongoTemplate;
 
-    public void replaceAll(List<T> list) {
+    public int replaceAll(List<T> list) {
         mongoTemplate.dropCollection(collection);
-        mongoTemplate.insert(list, collection);
+        return mongoTemplate.insert(list, collection).size();
     }
 
     public List<T> getAll() {
@@ -49,4 +49,5 @@ public abstract class BaseRepository<T> {
     public void insert(T item) {
         mongoTemplate.insert(item, collection);
     }
+
 }

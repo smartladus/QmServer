@@ -9,11 +9,13 @@ import com.smarladu.qmserver.repository.cert.TaskRecordRepository;
 import com.smarladu.qmserver.repository.cert.CertTaskRepository;
 import com.smarladu.qmserver.repository.cert.RegionRepository;
 import com.smarladu.qmserver.utils.ExcelUtil;
+import com.smarladu.qmserver.utils.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +70,13 @@ public class CertMgmtController {
 
     @PostMapping("/task/upload")
     @ResponseBody
-    public String importCertTask(MultipartFile file) {
+    public int importCertTask(MultipartFile file, @RequestParam(value = "mode") String mode) {
         try {
             ArrayList<CertTask>list = ExcelUtil.getExcelData(file, CertTask.class);
-            certTaskRepository.replaceAll(list);
-            return "SUCCESS";
+            return certTaskRepository.uploadTasks(mode, list);
         } catch (IOException e) {
             log.error(e.getMessage());
-            return "FAIL";
+            return -1;
         }
     }
 
@@ -88,6 +89,19 @@ public class CertMgmtController {
     public void insertTask(@RequestBody CertTask certTask) {
         log.info(certTask.toString());
         certTaskRepository.insert(certTask);
+    }
+
+    @DeleteMapping("/task/delete/{taskNo}")
+    public long deleteTaskByTaskNo(@PathVariable String taskNo) {
+        return certTaskRepository.deleteTaskByTaskNo(taskNo);
+    }
+
+    @RequestMapping("/task/download/template")
+    @ResponseBody
+    public void DownloadCertTaskListTemplate(HttpServletResponse response) {
+        String fileName = "认证任务清单模板.xlsx";
+        String result = FileUtil.downloadFile(response, fileName);
+        log.info("{} 下载：{}", fileName, result);
     }
 
     @PostMapping("/region/upload")
