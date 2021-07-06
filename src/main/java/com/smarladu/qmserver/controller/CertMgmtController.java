@@ -68,6 +68,12 @@ public class CertMgmtController {
         return  taskRecordRepository.findByTaskNo(taskNo);
     }
 
+    @PostMapping(value = "/task/record/insert", produces = "application/json;charset=UTF-8")
+    public TaskRecord insertTaskRecord(@RequestBody TaskRecord record) {
+        log.info(record.toString());
+        return taskRecordRepository.insertRecord(record);
+    }
+
     @PostMapping("/task/upload")
     @ResponseBody
     public int importCertTask(MultipartFile file, @RequestParam(value = "mode") String mode) {
@@ -83,6 +89,11 @@ public class CertMgmtController {
     @GetMapping("/task/get/all")
     public List<CertTask> getAllCertTask() {
         return  certTaskRepository.getAll();
+    }
+
+    @GetMapping("/task/get/{taskNo}")
+    public CertTask getCertTask(@PathVariable String taskNo) {
+        return certTaskRepository.findOneByField("task_no", taskNo);
     }
 
     @PostMapping(value = "/task/insert", produces = "application/json;charset=UTF-8")

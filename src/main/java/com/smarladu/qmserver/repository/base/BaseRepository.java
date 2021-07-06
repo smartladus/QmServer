@@ -3,6 +3,8 @@ package com.smarladu.qmserver.repository.base;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.ParameterizedType;
@@ -50,4 +52,8 @@ public abstract class BaseRepository<T> {
         mongoTemplate.insert(item, collection);
     }
 
+    public T findOneByField (String field, String value) {
+        Query query = new Query(Criteria.where(field).is(value));
+        return mongoTemplate.findOne(query, entityClass, collection);
+    }
 }
