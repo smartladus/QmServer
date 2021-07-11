@@ -91,6 +91,11 @@ public class CertMgmtController {
         return  certTaskRepository.getAll();
     }
 
+    @GetMapping("/task/no/get/{taskNoSeg}")
+    public List<String> getRelatedCertTaskNo(@PathVariable String taskNoSeg) {
+        return  certTaskRepository.getFuzzyTaskNo(taskNoSeg);
+    }
+
     @GetMapping("/task/get/{taskNo}")
     public CertTask getCertTask(@PathVariable String taskNo) {
         return certTaskRepository.findOneByField("task_no", taskNo);

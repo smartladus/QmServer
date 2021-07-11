@@ -1,8 +1,6 @@
 package com.smarladu.qmserver.entity.certtask;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.smarladu.qmserver.easyexcel.converter.CertReqConverter;
-import com.smarladu.qmserver.easyexcel.converter.StringArrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,8 +41,11 @@ public class CertTask implements Serializable {
     @ExcelProperty("cert_owner")
     private String cert_owner; // 证书归属
 
-    @ExcelProperty(value = "cert_req", converter = CertReqConverter.class)
-    private CertReq[] cert_req; // 认证类型和方式
+    @ExcelProperty(value = "cert_name")
+    private String cert_name; // 认证类型
+
+    @ExcelProperty(value = "cert_method")
+    private String cert_method; // 获证方式
 
     @ExcelProperty("jv_model")
     private String jv_model; // JV型号范围
@@ -61,8 +62,8 @@ public class CertTask implements Serializable {
     @ExcelProperty("end_date")
     private Date end_date; // 结束日期
 
-    @ExcelProperty(value = "cert_no", converter = StringArrConverter.class)
-    private String[] cert_no; // 证书编号
+    @ExcelProperty(value = "cert_no")
+    private String cert_no; // 证书编号
 
     @ExcelProperty("todo")
     private String todo; // 待办事项

@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @program: QmServer
@@ -55,5 +57,30 @@ public abstract class BaseRepository<T> {
     public T findOneByField (String field, String value) {
         Query query = new Query(Criteria.where(field).is(value));
         return mongoTemplate.findOne(query, entityClass, collection);
+    }
+
+    /**
+     * 取得某一列的值
+     * @param field 字段名
+     * @return 某个字段的所有值，除了该字段，其余字段都为空
+     */
+    public List<T> getFieldList(String field) {
+        Query query = new Query();
+        query.fields().include(field);
+        return mongoTemplate.find(query, entityClass, collection);
+    }
+
+    /**
+     * 模糊查找取得某一字段的值
+     * @param field 字段名
+     * @param fieldSeg 模糊查找的内容
+     * @return 某个字段的所有值，除了该字段，其余字段都为空
+     */
+    public List<T> getFuzzyFieldList(String field, String fieldSeg) {
+        Query query = new Query();
+        Pattern pattern = Pattern.compile("^.*" + fieldSeg + ".*$", Pattern.CASE_INSENSITIVE);
+        query.addCriteria(Criteria.where("task_no").regex(pattern));
+        query.fields().include(field);
+        return mongoTemplate.find(query, entityClass, collection);
     }
 }
