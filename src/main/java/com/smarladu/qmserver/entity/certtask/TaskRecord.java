@@ -1,7 +1,6 @@
 package com.smarladu.qmserver.entity.certtask;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.smarladu.qmserver.easyexcel.converter.LocalDateTimeConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 @Data
@@ -36,4 +35,22 @@ public class TaskRecord implements Serializable {
 
     @ExcelProperty(value = "record_time")
     private Date record_time;
+
+    public static void main(String[] args) {
+        String fieldName = "content";
+        TaskRecord record = new TaskRecord("111", "rec_no111", "taskno111", "DONE", "内容", new Date());
+        Field[] fields = record.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                System.out.println(fieldName + "->" + field.getName());
+                if (fieldName.equals(field.getName())) {
+                    System.out.println(field.get(record));
+                    break;
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -1,17 +1,21 @@
 package com.smarladu.qmserver.repository.cert;
 
+import com.alibaba.excel.util.StringUtils;
 import com.smarladu.qmserver.entity.certtask.CertTask;
+import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.repository.base.BaseRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Repository
 public class CertTaskRepository extends BaseRepository<CertTask> {
@@ -52,6 +56,37 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
         }
         return count;
     }
+
+    public CertTask insertTask(CertTask task) {
+        CertTask taskCopy = task;
+        if (taskCopy.getTask_no() == null || taskCopy.getTask_no().equals("new")) {
+            taskCopy.setTask_no(createTaskNo(task));
+        }
+        mongoTemplate.insert(taskCopy, collection);
+        return taskCopy;
+    }
+
+    private String createTaskNo(CertTask task) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(task.getRegion());
+        sb.append(task.getCert_name());
+        sb.append("X".repeat(4 - task.getCert_name().length()));
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        sb.append(LocalDateTime.now().format(dateTimeFormatter));
+        int i = 1;
+        NumberFormat formatter = new DecimalFormat("000");
+        while (isTaskNoExist(sb + formatter.format(i))) {
+            i++;
+        }
+        return sb + formatter.format(i);
+    }
+
+    private boolean isTaskNoExist(String taskNo) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("task_no").is(taskNo));
+        return mongoTemplate.find(query, TaskRecord.class, collection).size() > 0;
+    }
+
 
     public List<String> getFuzzyTaskNo(String taskNoSeg) {
         ArrayList<String> res = new ArrayList<>();

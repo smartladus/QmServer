@@ -47,6 +47,9 @@ public class CertTask implements Serializable {
     @ExcelProperty(value = "cert_method")
     private String cert_method; // 获证方式
 
+    @ExcelProperty(value = "cert_method_desc")
+    private String cert_method_desc; // 获证方式说明，例如RoHS SDoC是通过零部件清单进行的
+
     @ExcelProperty("jv_model")
     private String jv_model; // JV型号范围
 
@@ -65,9 +68,13 @@ public class CertTask implements Serializable {
     @ExcelProperty(value = "cert_no")
     private String cert_no; // 证书编号
 
-    @ExcelProperty("todo")
+    @ExcelProperty(value = "todo")
     private String todo; // 待办事项
 
-    @ExcelProperty("comments")
+    @ExcelProperty(value = "comments")
     private String comments; // 备注
+
+    public String getId() {
+        return this.id;
+    }
 }

@@ -1,5 +1,6 @@
 package com.smarladu.qmserver.controller;
 
+import com.mongodb.client.result.DeleteResult;
 import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.entity.certtask.CertTask;
 import com.smarladu.qmserver.entity.Region;
@@ -70,8 +71,17 @@ public class CertMgmtController {
 
     @PostMapping(value = "/task/record/insert", produces = "application/json;charset=UTF-8")
     public TaskRecord insertTaskRecord(@RequestBody TaskRecord record) {
-        log.info(record.toString());
         return taskRecordRepository.insertRecord(record);
+    }
+
+    @PostMapping(value = "/task/record/update")
+    public String updateTaskRecord(@RequestBody TaskRecord record) {
+        return taskRecordRepository.save(record);
+    }
+
+    @DeleteMapping(value = "/task/record/delete/{recNo}")
+    public DeleteResult deleteTaskRecord(@PathVariable String recNo) {
+        return taskRecordRepository.deleteByFieldVal("record_no", recNo);
     }
 
     @PostMapping("/task/upload")
@@ -98,13 +108,17 @@ public class CertMgmtController {
 
     @GetMapping("/task/get/{taskNo}")
     public CertTask getCertTask(@PathVariable String taskNo) {
-        return certTaskRepository.findOneByField("task_no", taskNo);
+        return certTaskRepository.findOneByFieldVal("task_no", taskNo);
     }
 
     @PostMapping(value = "/task/insert", produces = "application/json;charset=UTF-8")
-    public void insertTask(@RequestBody CertTask certTask) {
-        log.info(certTask.toString());
-        certTaskRepository.insert(certTask);
+    public CertTask insertTask(@RequestBody CertTask certTask) {
+        return certTaskRepository.insertTask(certTask);
+    }
+
+    @PostMapping(value = "/task/update")
+    public String updateTask(@RequestBody CertTask certTask) {
+        return certTaskRepository.save(certTask);
     }
 
     @DeleteMapping("/task/delete/{taskNo}")
@@ -136,6 +150,11 @@ public class CertMgmtController {
     @GetMapping("/region/get/all")
     public List<Region> getAllRegion() {
         return  regionRepository.getAll();
+    }
+
+    @GetMapping("/category/get/all")
+    public List<CertCategory> getAllCertCategory() {
+        return  certCategoryRepository.getAll();
     }
 
     @GetMapping("/category/get")

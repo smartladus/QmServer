@@ -8,6 +8,8 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+
 /**
  * @program: QmServer
  * @description: 区域/国家缩写，及英文全称
@@ -20,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "region")
-public class Region {
+public class Region implements Serializable {
     @Id
     private String id;
 

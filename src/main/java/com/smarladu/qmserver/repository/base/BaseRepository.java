@@ -1,5 +1,6 @@
 package com.smarladu.qmserver.repository.base;
 
+import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -7,9 +8,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -25,12 +26,14 @@ import java.util.regex.Pattern;
 public abstract class BaseRepository<T> {
     protected String collection = "";
     private Class<T> entityClass;
+    private Field[] fields;
 
     {
         setCollection();
         Type type = getClass().getGenericSuperclass();
         Type trueType = ((ParameterizedType) type).getActualTypeArguments()[0];
         this.entityClass = (Class<T>) trueType;
+        fields = entityClass.getDeclaredFields();
     }
 
     /**
@@ -54,9 +57,18 @@ public abstract class BaseRepository<T> {
         mongoTemplate.insert(item, collection);
     }
 
-    public T findOneByField (String field, String value) {
+    public String save(T item) {
+        return mongoTemplate.save(item, collection).equals(item) ? "SUCCESS" : "FAIL";
+    }
+
+    public T findOneByFieldVal (String field, String value) {
         Query query = new Query(Criteria.where(field).is(value));
         return mongoTemplate.findOne(query, entityClass, collection);
+    }
+
+    public DeleteResult deleteByFieldVal (String field, String value) {
+        Query query = new Query(Criteria.where(field).is(value));
+        return mongoTemplate.remove(query, collection);
     }
 
     /**
