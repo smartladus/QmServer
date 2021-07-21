@@ -26,6 +26,9 @@ public class Region implements Serializable {
     @Id
     private String id;
 
+    @ExcelProperty("continent")
+    private String continent; // 所属大洲
+
     @ExcelProperty("abbr")
     private String abbr; // 区域/国家缩写，一般为2位
 

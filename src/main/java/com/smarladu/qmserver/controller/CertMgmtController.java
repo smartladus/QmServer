@@ -75,7 +75,7 @@ public class CertMgmtController {
     }
 
     @PostMapping(value = "/task/record/update")
-    public String updateTaskRecord(@RequestBody TaskRecord record) {
+    public TaskRecord updateTaskRecord(@RequestBody TaskRecord record) {
         return taskRecordRepository.save(record);
     }
 
@@ -117,7 +117,7 @@ public class CertMgmtController {
     }
 
     @PostMapping(value = "/task/update")
-    public String updateTask(@RequestBody CertTask certTask) {
+    public CertTask updateTask(@RequestBody CertTask certTask) {
         return certTaskRepository.save(certTask);
     }
 
@@ -134,22 +134,34 @@ public class CertMgmtController {
         log.info("{} 下载：{}", fileName, result);
     }
 
-    @PostMapping("/region/upload")
-    @ResponseBody
-    public String importRegion(MultipartFile file) {
-        try {
-            ArrayList<Region>list = ExcelUtil.getExcelData(file, Region.class);
-            regionRepository.replaceAll(list);
-            return "SUCCESS";
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return "FAIL";
-        }
-    }
-
     @GetMapping("/region/get/all")
     public List<Region> getAllRegion() {
         return  regionRepository.getAll();
+    }
+
+    @PostMapping(value = "/region")
+    public Region saveRegion(@RequestBody Region region) {
+        return regionRepository.save(region);
+    }
+
+    @PostMapping("/region/upload")
+    public int importRegions(MultipartFile file, @RequestParam(value = "mode") String mode ) {
+        try {
+            ArrayList<Region>list = ExcelUtil.getExcelData(file, Region.class);
+            if (mode.equals("replace")) {
+                return regionRepository.replaceAll(list);
+            } else {
+                return regionRepository.saveAll(list);
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return -1;
+        }
+    }
+
+    @DeleteMapping(value = "/region")
+    public DeleteResult deleteRegion(@RequestBody Region region) {
+        return regionRepository.deleteByFieldVal("_id", region.getId());
     }
 
     @GetMapping("/category/get/all")

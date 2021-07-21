@@ -49,6 +49,10 @@ public abstract class BaseRepository<T> {
         return mongoTemplate.insert(list, collection).size();
     }
 
+    public int saveAll(List<T> list) {
+        return mongoTemplate.insert(list, collection).size();
+    }
+
     public List<T> getAll() {
         return mongoTemplate.findAll(entityClass, collection);
     }
@@ -57,8 +61,8 @@ public abstract class BaseRepository<T> {
         mongoTemplate.insert(item, collection);
     }
 
-    public String save(T item) {
-        return mongoTemplate.save(item, collection).equals(item) ? "SUCCESS" : "FAIL";
+    public T save(T item) {
+        return mongoTemplate.save(item, collection);
     }
 
     public T findOneByFieldVal (String field, String value) {
