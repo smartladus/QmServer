@@ -134,14 +134,33 @@ public class CertMgmtController {
         log.info("{} 下载：{}", fileName, result);
     }
 
-    @GetMapping("/region/get/all")
+    /**
+     * ====================================================================================
+     * regions api
+     * ====================================================================================
+     */
+
+    // 获取region清单
+    @GetMapping("/regions")
     public List<Region> getAllRegion() {
         return  regionRepository.getAll();
     }
 
-    @PostMapping(value = "/region")
+    // 保存新增的region
+    @PostMapping("/regions")
     public Region saveRegion(@RequestBody Region region) {
+        return regionRepository.insert(region);
+    }
+
+    // 更新region属性值
+    @PutMapping("/regions")
+    public Region updateRegion(@RequestBody Region region) {
         return regionRepository.save(region);
+    }
+
+    @DeleteMapping("/regions")
+    public DeleteResult deleteRegion(@RequestBody Region region) {
+        return regionRepository.deleteByFieldVal("_id", region.getId());
     }
 
     @PostMapping("/region/upload")
@@ -159,10 +178,14 @@ public class CertMgmtController {
         }
     }
 
-    @DeleteMapping(value = "/region")
-    public DeleteResult deleteRegion(@RequestBody Region region) {
-        return regionRepository.deleteByFieldVal("_id", region.getId());
-    }
+
+
+
+
+
+
+
+
 
     @GetMapping("/category/get/all")
     public List<CertCategory> getAllCertCategory() {

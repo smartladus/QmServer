@@ -57,8 +57,8 @@ public abstract class BaseRepository<T> {
         return mongoTemplate.findAll(entityClass, collection);
     }
 
-    public void insert(T item) {
-        mongoTemplate.insert(item, collection);
+    public T insert(T item) {
+        return mongoTemplate.insert(item, collection);
     }
 
     public T save(T item) {
