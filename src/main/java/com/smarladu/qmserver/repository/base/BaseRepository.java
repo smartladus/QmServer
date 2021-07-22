@@ -3,6 +3,7 @@ package com.smarladu.qmserver.repository.base;
 import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -44,17 +46,27 @@ public abstract class BaseRepository<T> {
     @Autowired
     protected MongoTemplate mongoTemplate;
 
-    public int replaceAll(List<T> list) {
+    public Collection<T> replaceAll(List<T> list) {
         mongoTemplate.dropCollection(collection);
-        return mongoTemplate.insert(list, collection).size();
+        return mongoTemplate.insert(list, collection);
     }
 
-    public int saveAll(List<T> list) {
-        return mongoTemplate.insert(list, collection).size();
+    public Collection<T> saveAll(List<T> list) {
+        return mongoTemplate.insert(list, collection);
     }
 
     public List<T> getAll() {
         return mongoTemplate.findAll(entityClass, collection);
+    }
+
+    public List<T> getAll(String fieldToSort, boolean asc) {
+        Query query = new Query();
+        if (asc) {
+            query.with(Sort.by(Sort.Order.asc(fieldToSort)));
+        } else {
+            query.with(Sort.by(Sort.Order.desc(fieldToSort)));
+        }
+        return mongoTemplate.find(query, entityClass, collection);
     }
 
     public T insert(T item) {
@@ -68,6 +80,26 @@ public abstract class BaseRepository<T> {
     public T findOneByFieldVal (String field, String value) {
         Query query = new Query(Criteria.where(field).is(value));
         return mongoTemplate.findOne(query, entityClass, collection);
+    }
+
+    public List<T> findByFieldVal (String field, String value) {
+        Query query = new Query(Criteria.where(field).is(value));
+        return mongoTemplate.find(query, entityClass, collection);
+    }
+
+    public List<T> findByFieldVal (String field, String value, String fieldToSort, boolean asc) {
+        Query query = new Query(Criteria.where(field).is(value));
+        if (asc) {
+            query.with(Sort.by(Sort.Order.asc(fieldToSort)));
+        } else {
+            query.with(Sort.by(Sort.Order.desc(fieldToSort)));
+        }
+        return mongoTemplate.find(query, entityClass, collection);
+    }
+
+    public boolean existsByField (String field, String value) {
+        Query query = new Query(Criteria.where(field).is(value));
+        return mongoTemplate.exists(query, entityClass, collection);
     }
 
     public DeleteResult deleteByFieldVal (String field, String value) {

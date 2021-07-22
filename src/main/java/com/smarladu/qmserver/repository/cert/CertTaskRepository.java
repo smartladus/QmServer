@@ -37,7 +37,7 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
     public int uploadTasks(String mode, List<CertTask> list) {
         switch (mode) {
             case "replace":
-                return replaceAll(list);
+                return replaceAll(list).size();
             case "add":
                 return addByTaskNo(list);
             default:

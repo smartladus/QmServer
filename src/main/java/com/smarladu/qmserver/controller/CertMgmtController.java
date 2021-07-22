@@ -1,5 +1,6 @@
 package com.smarladu.qmserver.controller;
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.DeleteResult;
 import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.entity.certtask.CertTask;
@@ -9,6 +10,7 @@ import com.smarladu.qmserver.repository.cert.CertCategoryRepository;
 import com.smarladu.qmserver.repository.cert.TaskRecordRepository;
 import com.smarladu.qmserver.repository.cert.CertTaskRepository;
 import com.smarladu.qmserver.repository.cert.RegionRepository;
+import com.smarladu.qmserver.result.ApiResult;
 import com.smarladu.qmserver.utils.ExcelUtil;
 import com.smarladu.qmserver.utils.FileUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,97 +50,78 @@ public class CertMgmtController {
     private CertCategoryRepository certCategoryRepository;
 
 
-    @PostMapping("/task/record/upload")
-    @ResponseBody
-    public String importCertRecord(MultipartFile file) {
+    /**
+     * ====================================================================================
+     * 各类文件上传
+     * ====================================================================================
+     */
+
+    // 上传认证区域，默认为增量方式
+    @PostMapping("/upload/regions")
+    public ApiResult importRegions(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+        try {
+            ArrayList<Region>list = ExcelUtil.getExcelData(file, Region.class);
+            Collection<Region> regions;
+            String msg = null;
+            if (mode.equals("replace")) {
+                regions = regionRepository.replaceAll(list);
+                msg = "regions replaced, count: " + regions.size();
+            } else {
+                regions = regionRepository.saveAll(list);
+                msg = "regions added, count: " + regions.size();
+            }
+            return ApiResult.success(msg, regions);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ApiResult.fail("regions upload failed: " + e.getMessage());
+        }
+    }
+
+    // 上传认证任务记录，默认为增量方式
+    @PostMapping("/upload/records")
+    public ApiResult importCertRecord(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
         try {
             ArrayList<TaskRecord>list = ExcelUtil.getExcelData(file, TaskRecord.class);
-            taskRecordRepository.replaceAll(list);
-            return "SUCCESS";
+            Collection<TaskRecord> records;
+            String msg = null;
+            if (mode.equals("replace")) {
+                records = taskRecordRepository.replaceAll(list);
+                msg = "records replaced, count: " + records.size();
+            } else {
+                records = taskRecordRepository.saveAll(list);
+                msg = "records added, count: " + records.size();
+            }
+            return ApiResult.success(msg, records);
         } catch (IOException e) {
             log.error(e.getMessage());
-            return "FAIL";
+            return ApiResult.fail("records upload failed: " + e.getMessage());
         }
     }
 
-    @GetMapping("/task/record/get/all")
-    public List<TaskRecord> getAllTaskRecord() {
-        return  taskRecordRepository.getAll();
-    }
-
-    @GetMapping("/task/record/get/{taskNo}")
-    public List<TaskRecord> getTaskRecordByTaskNo(@PathVariable String taskNo) {
-        return  taskRecordRepository.findByTaskNo(taskNo);
-    }
-
-    @PostMapping(value = "/task/record/insert", produces = "application/json;charset=UTF-8")
-    public TaskRecord insertTaskRecord(@RequestBody TaskRecord record) {
-        return taskRecordRepository.insertRecord(record);
-    }
-
-    @PostMapping(value = "/task/record/update")
-    public TaskRecord updateTaskRecord(@RequestBody TaskRecord record) {
-        return taskRecordRepository.save(record);
-    }
-
-    @DeleteMapping(value = "/task/record/delete/{recNo}")
-    public DeleteResult deleteTaskRecord(@PathVariable String recNo) {
-        return taskRecordRepository.deleteByFieldVal("record_no", recNo);
-    }
-
-    @PostMapping("/task/upload")
-    @ResponseBody
-    public int importCertTask(MultipartFile file, @RequestParam(value = "mode") String mode) {
+    // 上传认证任务，默认为增量方式
+    @PostMapping("/upload/tasks")
+    public ApiResult importCertTask(MultipartFile file, @RequestParam(value = "mode") String mode) {
         try {
             ArrayList<CertTask>list = ExcelUtil.getExcelData(file, CertTask.class);
-            return certTaskRepository.uploadTasks(mode, list);
+            Collection<CertTask> tasks;
+            String msg = null;
+            if (mode.equals("replace")) {
+                tasks = certTaskRepository.replaceAll(list);
+                msg = "tasks replaced, count: " + tasks.size();
+            } else {
+                tasks = certTaskRepository.saveAll(list);
+                msg = "tasks added, count: " + tasks.size();
+            }
+            return ApiResult.success(msg, tasks);
         } catch (IOException e) {
             log.error(e.getMessage());
-            return -1;
+            return ApiResult.fail("tasks upload failed: " + e.getMessage());
         }
-    }
-
-    @GetMapping("/task/get/all")
-    public List<CertTask> getAllCertTask() {
-        return  certTaskRepository.getAll();
-    }
-
-    @GetMapping("/task/no/get/{taskNoSeg}")
-    public List<String> getRelatedCertTaskNo(@PathVariable String taskNoSeg) {
-        return  certTaskRepository.getFuzzyTaskNo(taskNoSeg);
-    }
-
-    @GetMapping("/task/get/{taskNo}")
-    public CertTask getCertTask(@PathVariable String taskNo) {
-        return certTaskRepository.findOneByFieldVal("task_no", taskNo);
-    }
-
-    @PostMapping(value = "/task/insert", produces = "application/json;charset=UTF-8")
-    public CertTask insertTask(@RequestBody CertTask certTask) {
-        return certTaskRepository.insertTask(certTask);
-    }
-
-    @PostMapping(value = "/task/update")
-    public CertTask updateTask(@RequestBody CertTask certTask) {
-        return certTaskRepository.save(certTask);
-    }
-
-    @DeleteMapping("/task/delete/{taskNo}")
-    public long deleteTaskByTaskNo(@PathVariable String taskNo) {
-        return certTaskRepository.deleteTaskByTaskNo(taskNo);
-    }
-
-    @RequestMapping("/task/download/template")
-    @ResponseBody
-    public void DownloadCertTaskListTemplate(HttpServletResponse response) {
-        String fileName = "认证任务清单模板.xlsx";
-        String result = FileUtil.downloadFile(response, fileName);
-        log.info("{} 下载：{}", fileName, result);
     }
 
     /**
      * ====================================================================================
-     * regions api
+     * Regions Api
      * ====================================================================================
      */
 
@@ -148,35 +133,187 @@ public class CertMgmtController {
 
     // 保存新增的region
     @PostMapping("/regions")
-    public Region saveRegion(@RequestBody Region region) {
-        return regionRepository.insert(region);
+    public ApiResult saveRegion(@RequestBody Region region) {
+        String errMsg = null;
+        if (regionRepository.existsByField("abbr", region.getAbbr())) {
+            errMsg = "prop of region duplicated: abbr -> " + region.getAbbr();
+        }
+        if (regionRepository.existsByField("region_chs", region.getRegion_chs())) {
+            errMsg = "prop of region duplicated: region_chs -> " + region.getRegion_chs();
+        }
+        if (errMsg == null) {
+            Region res = regionRepository.insert(region);
+            return ApiResult.success("region created: " + res.toString(), res);
+        } else {
+            return ApiResult.fail(errMsg);
+        }
     }
 
     // 更新region属性值
-    @PutMapping("/regions")
-    public Region updateRegion(@RequestBody Region region) {
-        return regionRepository.save(region);
-    }
-
-    @DeleteMapping("/regions")
-    public DeleteResult deleteRegion(@RequestBody Region region) {
-        return regionRepository.deleteByFieldVal("_id", region.getId());
-    }
-
-    @PostMapping("/region/upload")
-    public int importRegions(MultipartFile file, @RequestParam(value = "mode") String mode ) {
-        try {
-            ArrayList<Region>list = ExcelUtil.getExcelData(file, Region.class);
-            if (mode.equals("replace")) {
-                return regionRepository.replaceAll(list);
-            } else {
-                return regionRepository.saveAll(list);
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return -1;
+    @PutMapping("/regions/{regionId}")
+    public ApiResult updateRegion(@PathVariable(value = "regionId") String regionId, @RequestBody Region region) {
+        if (regionRepository.existsByField("_id", regionId)) {
+            return ApiResult.success("region " + regionId + " updated: " + region.toString(), regionRepository.save(region));
+        } else {
+            return ApiResult.fail("region not found with id: " + regionId);
         }
     }
+
+    // 删除region
+    @DeleteMapping("/regions/{regionId}")
+    public ApiResult deleteRegion(@PathVariable(value = "regionId") String regionId) {
+        DeleteResult res = regionRepository.deleteByFieldVal("_id", regionId);
+        Long deletedCount = res.getDeletedCount();
+        if (deletedCount.intValue() > 0) {
+            return ApiResult.success("region " + regionId + " deleted: " + deletedCount.intValue(), deletedCount);
+        } else {
+            return ApiResult.fail("fail to delete region, region not found with id: " + regionId);
+        }
+    }
+
+    /**
+     * ====================================================================================
+     * Task Record Api
+     * ====================================================================================
+     */
+
+    // 获取指定任务的所有历史记录，未指定任务编号则返回所有记录
+    @GetMapping("/records")
+    public ApiResult getRecordsOfTask(@RequestParam(value = "task_no", required = false) String taskNo) {
+        if (taskNo == null) {
+            return ApiResult.success("", taskRecordRepository.getAll());
+        }
+        if (certTaskRepository.existsByField("task_no", taskNo)) {
+            return ApiResult.success("", taskRecordRepository.findByFieldVal("task_no", taskNo, "record_time", false));
+        } else {
+            return ApiResult.fail("task " + taskNo + " not found");
+        }
+    }
+
+    // 保存新增历史记录
+    @PostMapping("/records")
+    public ApiResult saveRecordOfTask(@RequestBody TaskRecord record) {
+        String taskNo = record.getTask_no();
+        if (certTaskRepository.existsByField("task_no", taskNo)) {
+            return ApiResult.success(
+                    "new record for task " + taskNo + " saved",
+                    taskRecordRepository.insertRecord(record));
+        } else {
+            return ApiResult.fail("Task " + taskNo + " not found");
+        }
+    }
+
+    // 删除指定记录
+    @DeleteMapping("/records/{recNo}")
+    public ApiResult deleteTaskRecord(@PathVariable String recNo) {
+        String errMsg = null;
+        if (!taskRecordRepository.existsByField("record_no", recNo)) {
+            errMsg = "Record " + recNo + " not found";
+        }
+        if (errMsg == null) {
+            return ApiResult.success(
+                    "Record " + recNo + " deleted",
+                    taskRecordRepository.deleteByFieldVal("record_no", recNo)
+            );
+        } else {
+            return ApiResult.fail(errMsg);
+        }
+    }
+
+    // 更新指定的任务记录
+    @PutMapping("/records/{recNo}")
+    public ApiResult updateTaskRecord(@PathVariable String recNo, @RequestBody TaskRecord record) {
+        String errMsg = null;
+        if (!taskRecordRepository.existsByField("record_no", recNo)) {
+            errMsg = "Record " + recNo + " not found";
+        }
+        if (errMsg == null) {
+            return ApiResult.success(
+                    "Record " + recNo + " updated",
+                    taskRecordRepository.save(record)
+            );
+        } else {
+            return ApiResult.fail(errMsg);
+        }
+    }
+
+    /**
+     * ====================================================================================
+     * Task Api
+     * ====================================================================================
+     */
+    // 获取所有任务
+    @GetMapping("/tasks")
+    public ApiResult getAllCertTask() {
+        return ApiResult.success(certTaskRepository.getAll("start_date", false));
+    }
+
+    // 获取指定任务
+    @GetMapping("/tasks/{taskNo}")
+    public ApiResult getCertTask(@PathVariable String taskNo) {
+        CertTask task = certTaskRepository.findOneByFieldVal("task_no", taskNo);
+        if (task != null) {
+            return ApiResult.success(task);
+        }
+        return ApiResult.fail("Task " + taskNo + " not found");
+    }
+
+    // 保存新增任务
+    @PostMapping(value = "/tasks")
+    public ApiResult insertTask(@RequestBody CertTask certTask) {
+        certTask.setStart_date(new Date());
+        return ApiResult.success(certTaskRepository.insertTask(certTask));
+    }
+
+    // 删除指定任务
+    @DeleteMapping("/tasks/{taskNo}")
+    public ApiResult deleteTaskByTaskNo(@PathVariable String taskNo) {
+        DeleteResult res = certTaskRepository.deleteByFieldVal("task_no", taskNo);
+        Long deletedCount = res.getDeletedCount();
+        if (deletedCount.intValue() > 0) {
+            return ApiResult.success("task " + taskNo + " deleted", deletedCount);
+        } else {
+            return ApiResult.fail("fail to delete task " + taskNo);
+        }
+    }
+
+    // 更新指定任务
+    @PutMapping("/tasks/{taskNo}")
+    public ApiResult updateTask(@PathVariable String taskNo, @RequestBody CertTask certTask) {
+        String errMsg = null;
+        if (!certTaskRepository.existsByField("task_no", taskNo)) {
+            errMsg = "task " + taskNo + " not found";
+        }
+        if (errMsg == null) {
+            return ApiResult.success(
+                    "task " + taskNo + " updated",
+                    certTaskRepository.save(certTask)
+            );
+        } else {
+            return ApiResult.fail(errMsg);
+        }
+    }
+
+    //=================================
+
+    @GetMapping("/task/no/get/{taskNoSeg}")
+    public List<String> getRelatedCertTaskNo(@PathVariable String taskNoSeg) {
+        return  certTaskRepository.getFuzzyTaskNo(taskNoSeg);
+    }
+
+
+
+
+
+
+    @RequestMapping("/task/download/template")
+    @ResponseBody
+    public void DownloadCertTaskListTemplate(HttpServletResponse response) {
+        String fileName = "认证任务清单模板.xlsx";
+        String result = FileUtil.downloadFile(response, fileName);
+        log.info("{} 下载：{}", fileName, result);
+    }
+
 
 
 
