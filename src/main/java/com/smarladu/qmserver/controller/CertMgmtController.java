@@ -119,6 +119,27 @@ public class CertMgmtController {
         }
     }
 
+    // 上传认证类型
+    @PostMapping("/upload/categories")
+    public ApiResult importCertCategory(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+        try {
+            ArrayList<CertCategory>list = ExcelUtil.getExcelData(file, CertCategory.class);
+            Collection<CertCategory> categories;
+
+            String msg = null;
+            if (mode.equals("replace")) {
+                categories = certCategoryRepository.replaceAll(list);
+                msg = "categories replaced, count: " + categories.size();
+            } else {
+                categories = certCategoryRepository.saveAll(list);
+                msg = "categories added, count: " + categories.size();
+            }
+            return ApiResult.success(msg, categories);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ApiResult.fail("categories upload failed: " + e.getMessage());
+        }
+    }
     /**
      * ====================================================================================
      * Regions Api
@@ -294,6 +315,22 @@ public class CertMgmtController {
         }
     }
 
+    /**
+     * ====================================================================================
+     * Category Api
+     * ====================================================================================
+     */
+
+    // 获取所有认证类型
+    @GetMapping("/categories")
+    public ApiResult getAllCertCategory(@RequestParam(value = "region", required = false) String region) {
+        if (region == null) {
+            return ApiResult.success(certCategoryRepository.getAll());
+        } else {
+            return ApiResult.success(certCategoryRepository.findByRegion(region));
+        }
+    }
+
     //=================================
 
     @GetMapping("/task/no/get/{taskNoSeg}")
@@ -315,35 +352,4 @@ public class CertMgmtController {
     }
 
 
-
-
-
-
-
-
-
-
-
-    @GetMapping("/category/get/all")
-    public List<CertCategory> getAllCertCategory() {
-        return  certCategoryRepository.getAll();
-    }
-
-    @GetMapping("/category/get")
-    public List<CertCategory> getCertCategoryByRegion(@RequestParam("region") String region) {
-        return  certCategoryRepository.findByRegion(region);
-    }
-
-    @PostMapping("/category/upload")
-    @ResponseBody
-    public String importCertCategory(MultipartFile file) {
-        try {
-            ArrayList<CertCategory>list = ExcelUtil.getExcelData(file, CertCategory.class);
-            certCategoryRepository.replaceAll(list);
-            return "SUCCESS";
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return "FAIL";
-        }
-    }
 }
