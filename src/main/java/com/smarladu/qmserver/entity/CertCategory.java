@@ -1,6 +1,7 @@
 package com.smarladu.qmserver.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smarladu.qmserver.easyexcel.converter.StringArrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class CertCategory implements Serializable {
     private String region; // 区域/国家缩写，一般为2位
 
     @ExcelProperty("cert_name")
-    private String cert_name; // 认证名称
+    private String certName; // 认证名称
 
     @ExcelProperty(value = "type", converter = StringArrConverter.class)
     private String[] type; // 认证类型

@@ -1,5 +1,9 @@
 package com.smarladu.qmserver.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.DeleteResult;
 import com.smarladu.qmserver.entity.certtask.TaskRecord;
@@ -13,6 +17,7 @@ import com.smarladu.qmserver.repository.cert.RegionRepository;
 import com.smarladu.qmserver.result.ApiResult;
 import com.smarladu.qmserver.utils.ExcelUtil;
 import com.smarladu.qmserver.utils.FileUtil;
+import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @program: QmServer
@@ -148,8 +154,8 @@ public class CertMgmtController {
 
     // 获取region清单
     @GetMapping("/regions")
-    public List<Region> getAllRegion() {
-        return  regionRepository.getAll();
+    public ApiResult getAllRegions() {
+        return ApiResult.success(regionRepository.getAll());
     }
 
     // 保存新增的region
@@ -159,8 +165,8 @@ public class CertMgmtController {
         if (regionRepository.existsByField("abbr", region.getAbbr())) {
             errMsg = "prop of region duplicated: abbr -> " + region.getAbbr();
         }
-        if (regionRepository.existsByField("region_chs", region.getRegion_chs())) {
-            errMsg = "prop of region duplicated: region_chs -> " + region.getRegion_chs();
+        if (regionRepository.existsByField("region_chs", region.getRegionChs())) {
+            errMsg = "prop of region duplicated: region_chs -> " + region.getRegionChs();
         }
         if (errMsg == null) {
             Region res = regionRepository.insert(region);
@@ -214,7 +220,7 @@ public class CertMgmtController {
     // 保存新增历史记录
     @PostMapping("/records")
     public ApiResult saveRecordOfTask(@RequestBody TaskRecord record) {
-        String taskNo = record.getTask_no();
+        String taskNo = record.getTaskNo();
         if (certTaskRepository.existsByField("task_no", taskNo)) {
             return ApiResult.success(
                     "new record for task " + taskNo + " saved",
@@ -269,6 +275,15 @@ public class CertMgmtController {
         return ApiResult.success(certTaskRepository.getAll("start_date", false));
     }
 
+    // 获取所有任务号
+    @GetMapping("/tasks/tasknos")
+    public ApiResult getAllCertTaskNos() {
+        List<String> taskNos = certTaskRepository.getAll().stream()
+                .map(CertTask::getTaskNo)
+                .collect(Collectors.toList());
+        return ApiResult.success(taskNos);
+    }
+
     // 获取指定任务
     @GetMapping("/tasks/{taskNo}")
     public ApiResult getCertTask(@PathVariable String taskNo) {
@@ -282,7 +297,7 @@ public class CertMgmtController {
     // 保存新增任务
     @PostMapping(value = "/tasks")
     public ApiResult insertTask(@RequestBody CertTask certTask) {
-        certTask.setStart_date(new Date());
+        certTask.setStartDate(new Date());
         return ApiResult.success(certTaskRepository.insertTask(certTask));
     }
 

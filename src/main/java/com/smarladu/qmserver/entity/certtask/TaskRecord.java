@@ -1,6 +1,7 @@
 package com.smarladu.qmserver.entity.certtask;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,19 +23,19 @@ public class TaskRecord implements Serializable {
     private String id;
 
     @ExcelProperty("record_no")
-    private String record_no;
+    private String recordNo;
 
     @ExcelProperty("task_no")
-    private String task_no;
+    private String taskNo;
 
     @ExcelProperty("task_stat")
-    private String task_stat;
+    private String taskStat;
 
     @ExcelProperty("content")
     private String content;
 
     @ExcelProperty(value = "record_time")
-    private Date record_time;
+    private Date recordTime;
 
     public static void main(String[] args) {
         String fieldName = "content";

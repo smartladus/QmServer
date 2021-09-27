@@ -1,5 +1,6 @@
 package com.smarladu.qmserver.result;
 
+import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class ApiResult {
     private Object data;
 
     public static ApiResult create(Result result, String msg, Object data) {
-        return new ApiResult(result, msg, data);
+        return new ApiResult(result, msg, JsonUtils.toSnakeJsonObj(data));
     }
 
     public static ApiResult success(String msg, Object data) {

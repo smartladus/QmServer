@@ -1,6 +1,8 @@
 package com.smarladu.qmserver.repository.base;
 
+import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.DeleteResult;
+import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,6 +17,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @program: QmServer
@@ -109,26 +112,41 @@ public abstract class BaseRepository<T> {
 
     /**
      * 取得某一列的值
-     * @param field 字段名
-     * @return 某个字段的所有值，除了该字段，其余字段都为空
+     * @param fieldName 字段名
+     * @return 某个字段的所有值，以JSON格式提供，如果字段未找到则返回null
      */
-    public List<T> getFieldList(String field) {
+    public List<Object> getFieldList(String fieldName) {
         Query query = new Query();
-        query.fields().include(field);
-        return mongoTemplate.find(query, entityClass, collection);
+        query.fields().include(fieldName);
+        List<T> list = mongoTemplate.find(query, entityClass, collection);
+        for (Field field : fields) {
+            field.setAccessible(true);
+            // 找到符合的字段则
+            if (fieldName.equals(field.getName())) {
+                return list.stream().map(t -> {
+                    try {
+                        return JSON.toJSON(field.get(t));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }).collect(Collectors.toList());
+            }
+        }
+        return null;
     }
 
     /**
      * 模糊查找取得某一字段的值
-     * @param field 字段名
+     * @param fieldName 字段名
      * @param fieldSeg 模糊查找的内容
      * @return 某个字段的所有值，除了该字段，其余字段都为空
      */
-    public List<T> getFuzzyFieldList(String field, String fieldSeg) {
+    public List<T> getFuzzyFieldList(String fieldName, String fieldSeg) {
         Query query = new Query();
         Pattern pattern = Pattern.compile("^.*" + fieldSeg + ".*$", Pattern.CASE_INSENSITIVE);
-        query.addCriteria(Criteria.where("task_no").regex(pattern));
-        query.fields().include(field);
+        query.addCriteria(Criteria.where(fieldName).regex(pattern));
+        query.fields().include(fieldName);
         return mongoTemplate.find(query, entityClass, collection);
     }
 }

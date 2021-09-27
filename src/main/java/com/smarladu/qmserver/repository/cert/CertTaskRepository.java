@@ -48,7 +48,7 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
     public int addByTaskNo(List<CertTask> list) {
         int count = 0;
         for(CertTask task : list) {
-            Query query = new Query(Criteria.where("task_no").is(task.getTask_no()));
+            Query query = new Query(Criteria.where("task_no").is(task.getTaskNo()));
             if (!mongoTemplate.exists(query, collection)) {
                 mongoTemplate.insert(task, collection);
                 count++;
@@ -59,8 +59,8 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
 
     public CertTask insertTask(CertTask task) {
         CertTask taskCopy = task;
-        if (taskCopy.getTask_no() == null || taskCopy.getTask_no().equals("new")) {
-            taskCopy.setTask_no(createTaskNo(task));
+        if (taskCopy.getTaskNo() == null || taskCopy.getTaskNo().equals("new")) {
+            taskCopy.setTaskNo(createTaskNo(task));
         }
         mongoTemplate.insert(taskCopy, collection);
         return taskCopy;
@@ -69,8 +69,8 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
     private String createTaskNo(CertTask task) {
         StringBuilder sb = new StringBuilder();
         sb.append(task.getRegion());
-        sb.append(task.getCert_name());
-        sb.append("X".repeat(4 - task.getCert_name().length()));
+        sb.append(task.getCertName());
+        sb.append("X".repeat(4 - task.getCertName().length()));
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         sb.append(LocalDateTime.now().format(dateTimeFormatter));
         int i = 1;
@@ -91,7 +91,7 @@ public class CertTaskRepository extends BaseRepository<CertTask> {
     public List<String> getFuzzyTaskNo(String taskNoSeg) {
         ArrayList<String> res = new ArrayList<>();
         for (CertTask task : getFuzzyFieldList("task_no", taskNoSeg)) {
-            res.add(task.getTask_no());
+            res.add(task.getTaskNo());
         }
         return res;
 

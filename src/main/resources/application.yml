@@ -8,3 +8,4 @@ spring:
       username: eason
       password: '123456'
       database: cert_db
+      field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy

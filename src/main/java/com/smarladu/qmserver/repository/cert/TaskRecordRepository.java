@@ -31,8 +31,8 @@ public class TaskRecordRepository extends BaseRepository<TaskRecord> {
 
     public TaskRecord insertRecord(TaskRecord record) {
         TaskRecord recordCopy = record;
-        if (recordCopy.getRecord_no() == null) {
-            recordCopy.setRecord_no(createRecNo());
+        if (recordCopy.getRecordNo() == null) {
+            recordCopy.setRecordNo(createRecNo());
         }
         mongoTemplate.insert(recordCopy, collection);
         return recordCopy;
