@@ -1,10 +1,5 @@
 package com.smarladu.qmserver.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.DeleteResult;
 import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.entity.certtask.CertTask;
@@ -17,7 +12,6 @@ import com.smarladu.qmserver.repository.cert.RegionRepository;
 import com.smarladu.qmserver.result.ApiResult;
 import com.smarladu.qmserver.utils.ExcelUtil;
 import com.smarladu.qmserver.utils.FileUtil;
-import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @program: QmServer
@@ -275,12 +268,10 @@ public class CertMgmtController {
         return ApiResult.success(certTaskRepository.getAll("start_date", false));
     }
 
-    // 获取所有任务号
-    @GetMapping("/tasks/tasknos")
-    public ApiResult getAllCertTaskNos() {
-        List<String> taskNos = certTaskRepository.getAll().stream()
-                .map(CertTask::getTaskNo)
-                .collect(Collectors.toList());
+    // 获取所有任务的指定字段清单
+    @GetMapping("/tasks/fields/{fieldName}")
+    public ApiResult getFieldOfAllCertTask(@PathVariable String fieldName) {
+        List<Object> taskNos = certTaskRepository.getFieldList(fieldName);
         return ApiResult.success(taskNos);
     }
 

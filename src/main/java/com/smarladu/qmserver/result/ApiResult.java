@@ -24,7 +24,8 @@ public class ApiResult {
     private Object data;
 
     public static ApiResult create(Result result, String msg, Object data) {
-        return new ApiResult(result, msg, JsonUtils.toSnakeJsonObj(data));
+//        return new ApiResult(result, msg, JsonUtils.toSnakeJsonObj(data));
+        return new ApiResult(result, msg, data);
     }
 
     public static ApiResult success(String msg, Object data) {

@@ -37,15 +37,4 @@ public class TestController {
     public List<CertTask> getTaskByPage(@RequestParam(value = "page_no") int pageNo, @RequestParam(value = "page_size") int pageSize) {
         return certTaskRepository.getTaskListByPage(pageNo, pageSize);
     }
-
-    @GetMapping("/supplier")
-    public ApiResult getSupplier() {
-        Supplier supplier1 = new Supplier("xxx", "起立", "起立科技有限公司", "拼接屏|监视器");
-        Supplier supplier2 = new Supplier("xxx", "捷翔", "起立科技有限公司", "拼接屏|监视器");
-        ArrayList<Supplier> suppliers = new ArrayList<>();
-        suppliers.add(supplier1);
-        suppliers.add(supplier2);
-
-        return ApiResult.success(JSON.toJSON(suppliers));
-    }
 }

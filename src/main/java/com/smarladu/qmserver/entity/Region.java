@@ -35,5 +35,6 @@ public class Region implements Serializable {
     private String abbr; // 区域/国家缩写，一般为2位
 
     @ExcelProperty("region_chs")
+    @JsonProperty("region_chs")
     private String regionChs; // 区域/国家中文全称
 }

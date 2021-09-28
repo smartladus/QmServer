@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 @Repository
 public abstract class BaseRepository<T> {
     protected String collection = "";
-    private Class<T> entityClass;
-    private Field[] fields;
+    private final Class<T> entityClass;
+    private final Field[] fields;
 
     {
         setCollection();
@@ -119,10 +119,11 @@ public abstract class BaseRepository<T> {
         Query query = new Query();
         query.fields().include(fieldName);
         List<T> list = mongoTemplate.find(query, entityClass, collection);
+        String camelFieldName = JsonUtils.snakeToCamel(fieldName);
         for (Field field : fields) {
             field.setAccessible(true);
             // 找到符合的字段则
-            if (fieldName.equals(field.getName())) {
+            if (camelFieldName.equals(field.getName())) {
                 return list.stream().map(t -> {
                     try {
                         return JSON.toJSON(field.get(t));

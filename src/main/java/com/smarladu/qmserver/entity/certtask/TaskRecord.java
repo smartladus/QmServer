@@ -23,18 +23,22 @@ public class TaskRecord implements Serializable {
     private String id;
 
     @ExcelProperty("record_no")
+    @JsonProperty("record_no")
     private String recordNo;
 
     @ExcelProperty("task_no")
+    @JsonProperty("task_no")
     private String taskNo;
 
     @ExcelProperty("task_stat")
+    @JsonProperty("task_stat")
     private String taskStat;
 
     @ExcelProperty("content")
     private String content;
 
-    @ExcelProperty(value = "record_time")
+    @ExcelProperty("record_time")
+    @JsonProperty("record_time")
     private Date recordTime;
 
     public static void main(String[] args) {

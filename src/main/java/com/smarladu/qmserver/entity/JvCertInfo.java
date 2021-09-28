@@ -16,8 +16,6 @@ public class JvCertInfo {
     @Id
     private String id;
 
-    
-
     private String cert_no;
     private Date valid_date;
     private Date expire_date;
