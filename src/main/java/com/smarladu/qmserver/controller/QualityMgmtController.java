@@ -24,8 +24,8 @@ import java.util.Collection;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping("/api/suppliers")
-public class SupplierMgmtController {
+@RequestMapping("/api/quality")
+public class QualityMgmtController {
     @Autowired
     private SupplierRepository supplierRepository;
 
@@ -37,8 +37,8 @@ public class SupplierMgmtController {
      * ====================================================================================
      */
     // 上传供应商清单，默认为增量方式
-    @PostMapping("/upload")
-    public ApiResult importRegions(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+    @PostMapping("/upload/suppliers")
+    public ApiResult importRegions(MultipartFile file, @RequestParam(value = "mode", required = false, defaultValue = "add") String mode) {
         try {
             ArrayList<Supplier> list = ExcelUtil.getExcelData(file, Supplier.class);
             Collection<Supplier> suppliers;
@@ -63,7 +63,11 @@ public class SupplierMgmtController {
      * Supplier Api
      * ====================================================================================
      */
-
+    // 获取供应商清单
+    @GetMapping("/suppliers")
+    public ApiResult getAllRegions() {
+        return ApiResult.success(supplierRepository.getAll());
+    }
 
 
 }

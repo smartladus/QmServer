@@ -57,7 +57,7 @@ public class CertMgmtController {
 
     // 上传认证区域，默认为增量方式
     @PostMapping("/upload/regions")
-    public ApiResult importRegions(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+    public ApiResult importRegions(MultipartFile file, @RequestParam(value = "mode", required = false, defaultValue = "add") String mode) {
         try {
             ArrayList<Region>list = ExcelUtil.getExcelData(file, Region.class);
             Collection<Region> regions;
@@ -78,9 +78,11 @@ public class CertMgmtController {
 
     // 上传认证任务记录，默认为增量方式
     @PostMapping("/upload/records")
-    public ApiResult importCertRecord(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+    public ApiResult importCertRecord(
+            MultipartFile file,
+            @RequestParam(value = "mode", required = false, defaultValue = "add") String mode) {
         try {
-            ArrayList<TaskRecord>list = ExcelUtil.getExcelData(file, TaskRecord.class);
+            ArrayList<TaskRecord> list = ExcelUtil.getExcelData(file, TaskRecord.class);
             Collection<TaskRecord> records;
             String msg = null;
             if (mode.equals("replace")) {
@@ -99,7 +101,7 @@ public class CertMgmtController {
 
     // 上传认证任务，默认为增量方式
     @PostMapping("/upload/tasks")
-    public ApiResult importCertTask(MultipartFile file, @RequestParam(value = "mode") String mode) {
+    public ApiResult importCertTask(MultipartFile file, @RequestParam(value = "mode", required = false, defaultValue = "add") String mode) {
         try {
             ArrayList<CertTask>list = ExcelUtil.getExcelData(file, CertTask.class);
             Collection<CertTask> tasks;
@@ -120,7 +122,7 @@ public class CertMgmtController {
 
     // 上传认证类型
     @PostMapping("/upload/categories")
-    public ApiResult importCertCategory(MultipartFile file, @RequestParam(value = "mode", required = false) String mode) {
+    public ApiResult importCertCategory(MultipartFile file, @RequestParam(value = "mode", required = false, defaultValue = "add") String mode) {
         try {
             ArrayList<CertCategory>list = ExcelUtil.getExcelData(file, CertCategory.class);
             Collection<CertCategory> categories;

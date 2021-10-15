@@ -32,11 +32,11 @@ public class Supplier implements Serializable {
     @ExcelProperty("供应商简称")
     private String abbr;
 
-    @ExcelProperty("中文全称")
+    @ExcelProperty("中文全名")
     @JsonProperty("fullname_zh")
     private String fullnameZh;
 
-    @ExcelProperty("英文全称")
+    @ExcelProperty("英文全名")
     @JsonProperty("fullname_en")
     private String fullnameEn;
 

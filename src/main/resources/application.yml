@@ -7,5 +7,5 @@ spring:
       port: 27017
       username: eason
       password: '123456'
-      database: cert_db
+      database: qm_db
       field-naming-strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
