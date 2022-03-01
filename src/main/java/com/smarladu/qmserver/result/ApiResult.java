@@ -1,6 +1,5 @@
 package com.smarladu.qmserver.result;
 
-import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -16,27 +15,32 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class ApiResult {
-    public enum Result {
-        SUCCESS, FAIL
-    }
-    private Result result;
-    private String msg;
-    private Object data;
+    public static class Code {
+        public static final int SUCCESS = 0;
+        public static final int UPLOAD_ERROR = 1;
+        public static final int INVALID_PARAM = 2;
+        public static final int RECORD_NOT_FOUND = 3;
+        public static final int FILE_NOT_EXIST = 4;
 
-    public static ApiResult create(Result result, String msg, Object data) {
+    }
+    private int code;
+    private String message;
+    private Object result;
+
+    public static ApiResult create(int code, String message, Object result) {
 //        return new ApiResult(result, msg, JsonUtils.toSnakeJsonObj(data));
-        return new ApiResult(result, msg, data);
+        return new ApiResult(code, message, result);
     }
 
-    public static ApiResult success(String msg, Object data) {
-        return create(Result.SUCCESS, msg, data);
+    public static ApiResult success(String message, Object result) {
+        return create(Code.SUCCESS, message, result);
     }
 
-    public static ApiResult success(Object data) {
-        return create(Result.SUCCESS, "", data);
+    public static ApiResult success(Object result) {
+        return create(Code.SUCCESS, "success", result);
     }
 
-    public static ApiResult fail(String msg) {
-        return create(Result.FAIL, msg, null);
+    public static ApiResult fail(int code, String message) {
+        return create(code, message, null);
     }
 }

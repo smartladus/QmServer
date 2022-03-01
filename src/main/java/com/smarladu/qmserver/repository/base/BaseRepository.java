@@ -2,9 +2,12 @@ package com.smarladu.qmserver.repository.base;
 
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.DeleteResult;
+import com.smarladu.qmserver.entity.PageResult;
 import com.smarladu.qmserver.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -60,6 +63,14 @@ public abstract class BaseRepository<T> {
 
     public List<T> getAll() {
         return mongoTemplate.findAll(entityClass, collection);
+    }
+
+    public PageResult<T> getAllByPage() {
+        Pageable pageable = PageRequest.of(1, 10);
+        Query query = new Query();
+        long total = mongoTemplate.count(query, entityClass, collection);
+        query.with(pageable);
+        return new PageResult<T>(total, mongoTemplate.find(query, entityClass, collection));
     }
 
     public List<T> getAll(String fieldToSort, boolean asc) {

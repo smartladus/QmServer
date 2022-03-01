@@ -5,7 +5,6 @@ import com.smarladu.qmserver.repository.base.BaseRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.text.DecimalFormat;
@@ -16,10 +15,10 @@ import java.util.List;
 
 
 @Repository
-public class TaskRecordRepository extends BaseRepository<TaskRecord> {
+public class CertTaskRecordRepository extends BaseRepository<TaskRecord> {
     @Override
     protected void setCollection() {
-        collection = "task_record";
+        collection = "cert_task_records";
     }
 
     public List<TaskRecord> findByTaskNo(String taskNo) {

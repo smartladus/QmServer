@@ -1,4 +1,4 @@
-package com.smarladu.qmserver.repository.cert;
+package com.smarladu.qmserver.repository.quality;
 
 import com.smarladu.qmserver.entity.Supplier;
 import com.smarladu.qmserver.repository.base.BaseRepository;

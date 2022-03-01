@@ -1,8 +1,6 @@
 package com.smarladu.qmserver.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,10 +29,9 @@ public class Region implements Serializable {
     @ExcelProperty("continent")
     private String continent; // 所属大洲
 
+    @ExcelProperty("country")
+    private String country; // 区域/国家中文全称
+
     @ExcelProperty("abbr")
     private String abbr; // 区域/国家缩写，一般为2位
-
-    @ExcelProperty("region_chs")
-    @JsonProperty("region_chs")
-    private String regionChs; // 区域/国家中文全称
 }

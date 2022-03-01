@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public class RegionRepository extends BaseRepository<Region> {
+public class CertRegionRepository extends BaseRepository<Region> {
     @Override
     protected void setCollection() {
-        collection = "region";
+        collection = "cert_regions";
     }
 }

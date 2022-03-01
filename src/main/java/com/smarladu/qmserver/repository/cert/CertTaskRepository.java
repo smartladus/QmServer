@@ -1,6 +1,5 @@
 package com.smarladu.qmserver.repository.cert;
 
-import com.alibaba.excel.util.StringUtils;
 import com.smarladu.qmserver.entity.certtask.CertTask;
 import com.smarladu.qmserver.entity.certtask.TaskRecord;
 import com.smarladu.qmserver.repository.base.BaseRepository;
@@ -21,7 +20,7 @@ import java.util.List;
 public class CertTaskRepository extends BaseRepository<CertTask> {
     @Override
     protected void setCollection() {
-        collection = "cert_kanban";
+        collection = "cert_tasks";
     }
 
     /**

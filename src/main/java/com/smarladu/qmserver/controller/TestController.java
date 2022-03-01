@@ -1,15 +1,11 @@
 package com.smarladu.qmserver.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.smarladu.qmserver.entity.Supplier;
 import com.smarladu.qmserver.entity.certtask.CertTask;
 import com.smarladu.qmserver.repository.cert.CertTaskRepository;
-import com.smarladu.qmserver.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

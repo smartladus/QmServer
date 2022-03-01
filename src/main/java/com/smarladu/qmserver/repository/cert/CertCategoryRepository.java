@@ -20,7 +20,7 @@ public class CertCategoryRepository extends BaseRepository<CertCategory> {
 
     @Override
     protected void setCollection() {
-        collection = "cert_category";
+        collection = "cert_categories";
     }
 
     public List<CertCategory> findByRegion(String abbr) {

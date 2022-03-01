@@ -28,11 +28,10 @@ public class CertCategory implements Serializable {
     @Id
     private String id;
 
-    @ExcelProperty("region")
-    private String region; // 区域/国家缩写，一般为2位
+    @ExcelProperty(value = "region", converter = StringArrConverter.class)
+    private String[] region; // 字符串数组：[大区名称, 国家/区域名称]
 
     @ExcelProperty("cert_name")
-    @JsonProperty("cert_name")
     private String certName; // 认证名称
 
     @ExcelProperty(value = "type", converter = StringArrConverter.class)
