@@ -1,7 +1,7 @@
-package com.smarladu.qmserver.controller;
+package com.smartladu.qmserver.controller;
 
-import com.smarladu.qmserver.service.DownloadService;
-import com.smarladu.qmserver.utils.FileUtil;
+import com.smartladu.qmserver.service.DownloadService;
+import com.smartladu.qmserver.utils.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

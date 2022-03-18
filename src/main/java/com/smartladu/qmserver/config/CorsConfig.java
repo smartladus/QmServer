@@ -1,4 +1,4 @@
-package com.smarladu.qmserver.config;
+package com.smartladu.qmserver.config;
 
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

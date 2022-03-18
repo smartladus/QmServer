@@ -1,13 +1,13 @@
-package com.smarladu.qmserver.controller.quality;
+package com.smartladu.qmserver.controller.quality;
 
 import com.mongodb.client.result.DeleteResult;
-import com.smarladu.qmserver.repository.quality.SupplierRepository;
-import com.smarladu.qmserver.result.ApiResult;
+import com.smartladu.qmserver.repository.quality.SupplierRepository;
+import com.smartladu.qmserver.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static com.smarladu.qmserver.result.ApiResult.Code;
+import static com.smartladu.qmserver.result.ApiResult.Code;
 
 /**
  * @program: QmServer

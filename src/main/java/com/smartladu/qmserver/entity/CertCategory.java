@@ -1,8 +1,7 @@
-package com.smarladu.qmserver.entity;
+package com.smartladu.qmserver.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.smarladu.qmserver.easyexcel.converter.StringArrConverter;
+import com.smartladu.qmserver.easyexcel.converter.StringArrConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

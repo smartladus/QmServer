@@ -1,4 +1,4 @@
-package com.smarladu.qmserver.entity;
+package com.smartladu.qmserver.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

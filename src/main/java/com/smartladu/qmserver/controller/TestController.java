@@ -1,7 +1,7 @@
-package com.smarladu.qmserver.controller;
+package com.smartladu.qmserver.controller;
 
-import com.smarladu.qmserver.entity.certtask.CertTask;
-import com.smarladu.qmserver.repository.cert.CertTaskRepository;
+import com.smartladu.qmserver.entity.certtask.CertTask;
+import com.smartladu.qmserver.repository.cert.CertTaskRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

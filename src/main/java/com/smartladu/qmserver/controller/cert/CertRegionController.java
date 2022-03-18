@@ -1,9 +1,9 @@
-package com.smarladu.qmserver.controller.cert;
+package com.smartladu.qmserver.controller.cert;
 
 import com.mongodb.client.result.DeleteResult;
-import com.smarladu.qmserver.entity.Region;
-import com.smarladu.qmserver.repository.cert.CertRegionRepository;
-import com.smarladu.qmserver.result.ApiResult;
+import com.smartladu.qmserver.entity.Region;
+import com.smartladu.qmserver.repository.cert.CertRegionRepository;
+import com.smartladu.qmserver.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
